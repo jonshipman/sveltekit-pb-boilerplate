@@ -8,9 +8,18 @@ declare global {
 	}
 
 	interface PbFilter {
+		fields?: string;
 		filter?: string;
 		sort?: string;
 		expand?: string;
+	}
+
+	interface PbList<T> {
+		items: T[];
+		page: number;
+		perPage: number;
+		totalItems: number;
+		totalPages: number;
 	}
 
 	interface User extends PbRecord {
@@ -18,8 +27,6 @@ declare global {
 		avatar: string;
 		name: string;
 	}
-
-
 	namespace App {
 		interface Locals {
 			pb: Pocketbase;
