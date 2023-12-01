@@ -1,3 +1,4 @@
 .env
 /*.sh
 /*.cmd
+!/setup.cmd
