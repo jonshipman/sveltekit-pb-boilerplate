@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  db:
+    restart: 'always'
+    build: './db'
+    expose:
+      - 80
+    ports:
+      - ${PORTDB:-8081}:80
+    environment:
+      FRONTEND_URL: http://web:3001
+    volumes:
+      - dbdata:/pb/pb_data
+      - ./db/pb_migrations:/pb/pb_migrations
+      - ./db/pb_hooks:/pb/pb_hooks
+  web:
+    restart: 'always'
+    image: 'node:20-alpine'
+    working_dir: '/app'
+    command: sh -c "npm install && npm run build && npm run start"
+    ports:
+      - ${PORTWEB:-8080}:3001
+    expose:
+      - 3001
+    environment:
+      PORT: 3001
+      DATABASE: http://db:80
+    volumes:
+      - './web:/app'
+
+volumes:
+  dbdata:

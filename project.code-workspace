@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": "db"
+    },
+    {
+      "path": "web"
+    },
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "db": true,
+      "web": true
+    }
+  }
+}
