@@ -1,8 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 
-export async function GET({ locals, params, url }) {
+export async function GET({ locals, params: { collection }, url }) {
 	if (!locals.user) throw error(403, 'Forbidden');
-	const { collection } = params;
 	const page = url.searchParams.get('page') || '1';
 	const perPage = url.searchParams.get('perPage') || '50';
 	const sort = url.searchParams.get('sort') || '-created,id';
