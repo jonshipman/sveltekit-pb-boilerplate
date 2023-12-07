@@ -5,6 +5,7 @@ declare global {
 		id: string;
 		created: string;
 		updated: string;
+		message?: string;
 	}
 
 	interface PbFilter {
@@ -20,6 +21,7 @@ declare global {
 		perPage: number;
 		totalItems: number;
 		totalPages: number;
+		message?: string;
 	}
 
 	interface User extends PbRecord {
