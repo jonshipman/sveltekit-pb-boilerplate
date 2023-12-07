@@ -9,7 +9,7 @@ export async function GET({ locals, params: { collection }, url }) {
 	const expand = url.searchParams.get('expand');
 	const fields = url.searchParams.get('fields');
 
-	const options: PbFilter = { sort };
+	const options: PbFilter = { sort, requestKey: `${collection}List` };
 	if (filter) options.filter = filter;
 	if (expand) options.expand = expand;
 	if (fields) options.fields = fields;

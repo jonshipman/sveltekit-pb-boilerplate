@@ -13,6 +13,7 @@ declare global {
 		filter?: string;
 		sort?: string;
 		expand?: string;
+		requestKey: string;
 	}
 
 	interface PbList<T> {

@@ -5,7 +5,7 @@ export async function GET({ locals, params: { collection, id }, url }) {
 	const expand = url.searchParams.get('expand');
 	const fields = url.searchParams.get('fields');
 
-	const options: PbFilter = {};
+	const options: PbFilter = { requestKey: collection + id };
 	if (expand) options.expand = expand;
 	if (fields) options.fields = fields;
 
