@@ -58,11 +58,35 @@ async function buildResponse(
 	return response;
 }
 
+export interface ResponseErrorOptions extends ErrorOptions {
+	cause: Response;
+}
+
+export class ResponseError extends Error {
+	cause: Response;
+
+	constructor(message: string, options: ResponseErrorOptions) {
+		super(message, options);
+		this.name = 'ResponseError';
+		this.cause = options.cause;
+	}
+}
+
+export class Status3XX extends ResponseError {}
+export class Status4XX extends ResponseError {}
+export class Status5XX extends ResponseError {}
+
 export async function doFetch<T>(
 	fetch: typeof window.fetch,
 	url: RequestInfo,
 	options?: RequestInit | undefined
 ): Promise<T> {
 	const response = await buildResponse(fetch, url, options);
+	if (response.status > 299) {
+		if (response.status < 400) throw new Status3XX(response.statusText, { cause: response });
+		if (response.status < 500) throw new Status4XX(response.statusText, { cause: response });
+		if (response.status < 600) throw new Status5XX(response.statusText, { cause: response });
+	}
+
 	return response.json();
 }
