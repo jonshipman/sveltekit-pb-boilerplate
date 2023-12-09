@@ -72,9 +72,26 @@ export class ResponseError extends Error {
 	}
 }
 
-export class Status3XX extends ResponseError {}
-export class Status4XX extends ResponseError {}
-export class Status5XX extends ResponseError {}
+export class Status3XX extends ResponseError {
+	constructor(message: string, options: ResponseErrorOptions) {
+		super(message, options);
+		this.name = 'Status3XX';
+	}
+}
+
+export class Status4XX extends ResponseError {
+	constructor(message: string, options: ResponseErrorOptions) {
+		super(message, options);
+		this.name = 'Status4XX';
+	}
+}
+
+export class Status5XX extends ResponseError {
+	constructor(message: string, options: ResponseErrorOptions) {
+		super(message, options);
+		this.name = 'Status5XX';
+	}
+}
 
 export async function doFetch<T>(
 	fetch: typeof window.fetch,
