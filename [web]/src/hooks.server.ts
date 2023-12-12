@@ -21,7 +21,7 @@ export async function handle({ event, resolve }) {
 
 	response.headers.set(
 		'set-cookie',
-		event.locals.pb.authStore.exportToCookie({ secure: DATABASE.startsWith('https') })
+		event.locals.pb.authStore.exportToCookie({ secure: event.url.protocol === 'https:' })
 	);
 
 	return response;
