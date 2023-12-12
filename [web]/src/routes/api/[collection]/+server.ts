@@ -1,6 +1,5 @@
-import type { PbFilter } from '$lib/pocketbase';
+import { getList, type PbFilter } from '$lib/pocketbase';
 import { error, json } from '@sveltejs/kit';
-import { ClientResponseError } from 'pocketbase';
 
 export async function GET({ locals, params: { collection }, url }) {
 	if (!locals.user) throw error(403, 'Forbidden');
@@ -17,16 +16,12 @@ export async function GET({ locals, params: { collection }, url }) {
 	if (expand) options.expand = expand;
 	if (fields) options.fields = fields;
 
-	try {
-		const data = await locals.pb
-			.collection(collection)
-			.getList(parseInt(page), parseInt(perPage), options);
-		return json(data);
-	} catch (e: unknown) {
-		if (e instanceof ClientResponseError && !e.isAbort) {
-			throw error(e.response.code || 500, e.response.message);
-		}
-	}
+	const list = await getList({
+		...options,
+		collection: 'job',
+		page: parseInt(page),
+		perPage: parseInt(perPage),
+	});
 
-	return json(undefined);
+	return json(list);
 }

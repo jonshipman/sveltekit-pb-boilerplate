@@ -1,6 +1,5 @@
-import type { PbFilter } from '$lib/pocketbase';
+import { getOne, type PbFilter } from '$lib/pocketbase';
 import { error, json } from '@sveltejs/kit';
-import { ClientResponseError } from 'pocketbase';
 
 export async function GET({ locals, params: { collection, id }, url }) {
 	if (!locals.user) throw error(403, 'Forbidden');
@@ -12,14 +11,7 @@ export async function GET({ locals, params: { collection, id }, url }) {
 	if (expand) options.expand = expand;
 	if (fields) options.fields = fields;
 
-	try {
-		const data = await locals.pb.collection(collection).getOne(id, options);
-		return json(data);
-	} catch (e: unknown) {
-		if (e instanceof ClientResponseError && !e.isAbort) {
-			throw error(e.response.code || 500, e.response.message);
-		}
-	}
+	const one = await getOne({ ...options, collection, id });
 
-	return json(undefined);
+	return json(one);
 }
