@@ -1,16 +1,13 @@
-import { DATABASE } from '$lib/config.server';
-import Pocketbase from 'pocketbase';
+import { POCKETBASE_CLIENT, type User } from '$lib/pocketbase';
 
 const allowedHeaders = ['retry-after', 'content-type' ];
-
-const POCKETBASE_CLIENT = new Pocketbase(DATABASE);
 
 export async function handle({ event, resolve }) {
 	event.locals.pb = POCKETBASE_CLIENT;
 	event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
 
 	if (event.locals.pb.authStore.isValid) {
-		event.locals.user = structuredClone(event.locals.pb.authStore.model);
+		event.locals.user = structuredClone(event.locals.pb.authStore.model) as User;
 	} else {
 		event.locals.user = undefined;
 	}

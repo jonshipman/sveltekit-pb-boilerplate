@@ -1,3 +1,4 @@
+import type { PbFilter } from '$lib/pocketbase';
 import { error, json } from '@sveltejs/kit';
 import { ClientResponseError } from 'pocketbase';
 
