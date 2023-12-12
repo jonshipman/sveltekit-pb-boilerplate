@@ -15,8 +15,10 @@ export async function GET({ locals, params: { collection, id }, url }) {
 		const data = await locals.pb.collection(collection).getOne(id, options);
 		return json(data);
 	} catch (e: unknown) {
-		if (e instanceof ClientResponseError) {
+		if (e instanceof ClientResponseError && !e.isAbort) {
 			throw error(e.response.code || 500, e.response.message);
 		}
 	}
+
+	return json({});
 }

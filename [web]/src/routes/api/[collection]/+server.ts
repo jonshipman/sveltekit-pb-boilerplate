@@ -22,8 +22,10 @@ export async function GET({ locals, params: { collection }, url }) {
 			.getList(parseInt(page), parseInt(perPage), options);
 		return json(data);
 	} catch (e: unknown) {
-		if (e instanceof ClientResponseError) {
+		if (e instanceof ClientResponseError && !e.isAbort) {
 			throw error(e.response.code || 500, e.response.message);
 		}
 	}
+
+	return json({});
 }
