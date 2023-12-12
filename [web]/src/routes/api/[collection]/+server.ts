@@ -9,8 +9,9 @@ export async function GET({ locals, params: { collection }, url }) {
 	const filter = url.searchParams.get('filter');
 	const expand = url.searchParams.get('expand');
 	const fields = url.searchParams.get('fields');
+	const requestKey = url.searchParams.get('requestKey') || `${collection}List`;
 
-	const options: PbFilter = { sort, requestKey: `${collection}List` };
+	const options: PbFilter = { sort, requestKey };
 	if (filter) options.filter = filter;
 	if (expand) options.expand = expand;
 	if (fields) options.fields = fields;
