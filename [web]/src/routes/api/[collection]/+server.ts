@@ -27,5 +27,5 @@ export async function GET({ locals, params: { collection }, url }) {
 		}
 	}
 
-	return json({});
+	return json(undefined);
 }
