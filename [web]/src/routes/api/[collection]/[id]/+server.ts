@@ -23,3 +23,18 @@ export async function GET({ locals, params: { collection, id }, url }) {
 
 	return json(undefined);
 }
+
+export async function DELETE({ locals, params: { collection, id } }) {
+	if (!locals.user) throw error(403, 'Forbidden');
+
+	try {
+		const data = await locals.pb.collection(collection).delete(id);
+		return json(data);
+	} catch (e: unknown) {
+		if (e instanceof ClientResponseError && !e.isAbort) {
+			throw error(e.response.code || 500, e.response.message);
+		}
+	}
+
+	return json(undefined);
+}
