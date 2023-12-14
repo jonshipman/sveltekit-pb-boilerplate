@@ -30,3 +30,19 @@ export async function GET({ locals, params: { collection }, url }) {
 
 	return json(undefined);
 }
+
+export async function POST({ locals, params: { collection }, request }) {
+	if (!locals.user) throw error(403, 'Forbidden');
+	const body = await request.json();
+
+	try {
+		const data = await locals.pb.collection(collection).create(body);
+		return json(data);
+	} catch (e: unknown) {
+		if (e instanceof ClientResponseError && !e.isAbort) {
+			throw error(e.response.code || 500, e.response.message);
+		}
+	}
+
+	return json(undefined);
+}
