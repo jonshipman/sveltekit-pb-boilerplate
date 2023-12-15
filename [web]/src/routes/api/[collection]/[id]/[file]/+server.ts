@@ -14,6 +14,10 @@ export async function GET({ locals, params: { collection, id, file } }) {
 		if (e instanceof ClientResponseError && !e.isAbort) {
 			error(e.response.code || 500, e.response.message);
 		}
+
+		if (e instanceof Error) {
+			error(500, e.message);
+		}
 	}
 
 	return json(undefined);
