@@ -4,5 +4,5 @@ export function GET({ locals }) {
 	locals.pb.authStore.clear();
 	locals.user = undefined;
 
-	throw redirect(303, '/');
+	redirect(303, '/');
 }

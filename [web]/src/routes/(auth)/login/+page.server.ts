@@ -19,10 +19,10 @@ export const actions = {
 			return { errorMessage: catachable.message };
 		}
 
-		throw redirect(303, '/admin');
+		redirect(303, '/admin');
 	}
 };
 
 export function load({ locals }) {
-	if (locals.user) throw redirect(303, '/admin');
+	if (locals.user) redirect(303, '/admin');
 }

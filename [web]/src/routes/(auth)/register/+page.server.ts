@@ -26,5 +26,5 @@ export const actions = {
 };
 
 export function load({ locals }) {
-	if (locals.user) throw redirect(303, '/admin');
+	if (locals.user) redirect(303, '/admin');
 }

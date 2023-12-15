@@ -3,7 +3,7 @@ import { error, json } from '@sveltejs/kit';
 import { ClientResponseError } from 'pocketbase';
 
 export async function GET({ locals, params: { collection }, url }) {
-	if (!locals.user) throw error(403, 'Forbidden');
+	if (!locals.user) error(403, 'Forbidden');
 	const page = url.searchParams.get('page') || '1';
 	const perPage = url.searchParams.get('perPage') || '50';
 	const sort = url.searchParams.get('sort') || '-created,id';
@@ -24,7 +24,7 @@ export async function GET({ locals, params: { collection }, url }) {
 		return json(data);
 	} catch (e: unknown) {
 		if (e instanceof ClientResponseError && !e.isAbort) {
-			throw error(e.response.code || 500, e.response.message);
+			error(e.response.code || 500, e.response.message);
 		}
 	}
 
@@ -32,7 +32,7 @@ export async function GET({ locals, params: { collection }, url }) {
 }
 
 export async function POST({ locals, params: { collection }, request }) {
-	if (!locals.user) throw error(403, 'Forbidden');
+	if (!locals.user) error(403, 'Forbidden');
 	const body = await request.json();
 
 	try {
@@ -40,7 +40,7 @@ export async function POST({ locals, params: { collection }, request }) {
 		return json(data);
 	} catch (e: unknown) {
 		if (e instanceof ClientResponseError && !e.isAbort) {
-			throw error(e.response.code || 500, e.response.message);
+			error(e.response.code || 500, e.response.message);
 		}
 	}
 
