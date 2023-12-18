@@ -7,9 +7,21 @@ export async function GET({ locals, params: { collection, id, file } }) {
 	try {
 		const fileToken = await locals.pb.files.getToken();
 		const data = await locals.pb.collection(collection).getOne(id);
-		const url = locals.pb.files.getUrl(data, data[file], { token: fileToken });
+		let url = '';
+		const urls = [];
 
-		return json({ url });
+		if (Array.isArray(data[file])) {
+			for (const datafile of data[file]) {
+				urls.push(locals.pb.files.getUrl(data, datafile, { token: fileToken }));
+			}
+
+			url = urls[0];
+		} else {
+			url = locals.pb.files.getUrl(data, data[file], { token: fileToken });
+			urls.push(url);
+		}
+
+		return json({ url, urls });
 	} catch (e: unknown) {
 		if (e instanceof ClientResponseError && !e.isAbort) {
 			error(e.response.code || 500, e.response.message);
