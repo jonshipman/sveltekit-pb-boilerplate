@@ -2,3 +2,4 @@
 /*.sh
 /*.cmd
 !/setup.cmd
+!/setup.sh
