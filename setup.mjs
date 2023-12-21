@@ -60,9 +60,16 @@ function run(command, args = [], options = {}) {
 
 	return new Promise((resolve, reject) => {
 		options.cwd = options.cwd || '.';
-		options.shell = options.shell ?? true;
-		options.execPath = os.platform() === 'win32' ? 'CMD.EXE' : 'sh';
-		options.execArgv = os.platform() === 'win32' ? ['/C'] : [];
+
+		if (os.platform() === 'win32') {
+			options.execPath = 'CMD.EXE';
+			options.execArgv = ['/C'];
+		} else {
+			options.execPath = 'bash';
+			options.execArgv = ['-c'];
+			command = command + ' ' + args.join(' ');
+			args = [];
+		}
 
 		const p = cp.fork(command, args, options);
 		let data = '';
@@ -70,8 +77,8 @@ function run(command, args = [], options = {}) {
 			data += m;
 		});
 
-		p.on('error', () => {
-			reject(data);
+		p.on('error', (code) => {
+			reject(code);
 		});
 
 		p.on('close', () => {
