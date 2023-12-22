@@ -13,9 +13,9 @@ These files should be customized to fit your project.
 
 ## more stuff
 
-You need to set `DATABASE` in your environment.
-The docker-compose.yml I included, I use for production and have `DATABASE` set to the internal docker url.
-However, during dev, I'll throw a pocketbase.exe in the db folder and set `DATABASE` to 'http://localhost:8090' to keep things smooth.
+You need to set `PUBLIC_DATABASE` in your environment.
+The docker-compose.yml I included, I use for production and have `PUBLIC_DATABASE` set to the internal docker url.
+However, during dev, I'll throw a pocketbase.exe in the db folder and set `PUBLIC_DATABASE` to 'http://localhost:8090' to keep things smooth.
 
 Change the `.github/workflows/main.yml` to work with your production environment.
 It's setup to workflow_dispatch, so change it for on: push: [main] or what have you.
