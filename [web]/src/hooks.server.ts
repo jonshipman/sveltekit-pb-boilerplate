@@ -1,10 +1,10 @@
-import { DATABASE } from '$lib/config.server';
+import { PUBLIC_DATABASE } from '$env/static/public';
 import Pocketbase from 'pocketbase';
 
 const allowedHeaders = ['retry-after', 'content-type' ];
 
 export async function handle({ event, resolve }) {
-	event.locals.pb = new Pocketbase(DATABASE);
+	event.locals.pb = new Pocketbase(PUBLIC_DATABASE);
 	event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
 
 	if (event.locals.pb.authStore.isValid) {
@@ -19,7 +19,10 @@ export async function handle({ event, resolve }) {
 
 	response.headers.set(
 		'set-cookie',
-		event.locals.pb.authStore.exportToCookie({ secure: event.url.protocol === 'https:' })
+		event.locals.pb.authStore.exportToCookie({
+			secure: event.url.protocol === 'https:',
+			httpOnly: false
+		})
 	);
 
 	return response;
