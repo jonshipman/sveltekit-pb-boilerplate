@@ -22,3 +22,16 @@ It's setup to workflow_dispatch, so change it for on: push: [main] or what have 
 
 Delete the `[web]` folder after merging with `web`.
 I didn't want to commit a SvelteKit init to this repo as I prefer to run the init on each new project.
+
+## setup
+
+You can run setup.mjs (setup.sh and setup.cmd are just wrappers) to initialize everything.
+It'll download a copy of pocketbase to .\db, run through the sveltekit installation, setup tailwind and @sveltekit/adapter-node, copy the [web] files over, setup a fresh .git, and remove the setup files.
+Should leave you ready to go.
+
+## ssr
+
+My projects tend to focus on SSR.
+This boilerplate will prioritize SSR as most projects will have the Pocketbase URL only on localhost.
+However, I recently needed realtime so I added it to the mix.
+If you want to protect your database: change the PUBLIC_DATABASE envvar to DATABASE, remove `httpOnly` from hooks.server, and remove hooks.client + lib/pocketbase/client.
