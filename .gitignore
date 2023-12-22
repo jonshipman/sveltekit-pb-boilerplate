@@ -3,3 +3,4 @@
 /*.cmd
 !/setup.cmd
 !/setup.sh
+!/gentypes.sh

@@ -1,6 +1,5 @@
-import type { PbFilter } from '$lib/pocketbase';
 import { error, json } from '@sveltejs/kit';
-import { ClientResponseError } from 'pocketbase';
+import { ClientResponseError, type RecordOptions } from 'pocketbase';
 
 export async function GET({ locals, params: { collection, id }, url }) {
 	if (!locals.user) error(403, 'Forbidden');
@@ -8,7 +7,7 @@ export async function GET({ locals, params: { collection, id }, url }) {
 	const fields = url.searchParams.get('fields');
 	const requestKey = url.searchParams.get('requestKey') || collection + id;
 
-	const options: PbFilter = { requestKey };
+	const options: RecordOptions = { requestKey };
 	if (expand) options.expand = expand;
 	if (fields) options.fields = fields;
 
