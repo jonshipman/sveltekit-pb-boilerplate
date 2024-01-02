@@ -28,7 +28,8 @@ await run('npm', [
 	'postcss',
 	'tailwindcss',
 	'autoprefixer',
-	'@sveltejs/adapter-node'
+	'@sveltejs/adapter-node',
+	'pocketbase'
 ]);
 await run('npx', ['tailwindcss', 'init'], { cwd: 'web' });
 await run('npm', ['--prefix', 'web', 'remove', '@sveltejs/adapter-auto']);
