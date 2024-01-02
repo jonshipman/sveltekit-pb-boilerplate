@@ -46,6 +46,11 @@ const envFile = path.join('web', '.env');
 const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
+const packageFile = path.join('web', 'package.json');
+const packageFileContents = await fs.promises.readFile(packageFile, 'utf8');
+const packageContents = packageFileContents.replace('"name": "web"', `"name": "${BASENAME.toLowerCase()}"`);
+await fs.promises.writeFile(packageFile, packageContents, 'utf8');
+
 if (os.platform() == 'win32') {
 	await run('ROBOCOPY.EXE', ['[web]\\', 'web\\', '/E']);
 	await run('RMDIR', ['[web]', '/S', '/Q']);
