@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 const PBVERSION = '0.20.1';
+const BASENAME = path.basename(process.cwd());
 
 const pblink = getPocketbaseLink();
 const pbzippath = path.join(os.tmpdir(), 'pocketbase.zip');
@@ -13,10 +14,12 @@ if (os.platform() == 'win32') {
 	await run('TAR.EXE', ['-xf', pbzippath], { cwd: os.tmpdir() });
 	await run('MOVE', [path.join(os.tmpdir(), 'pocketbase.exe'), 'db\\']);
 	await run('DEL', ['/F', pbzippath]);
+	await run('MOVE', ['project.code-workspace', `${BASENAME}.code-workspace`]);
 } else {
 	await run('unzip', [pbzippath], { cwd: os.tmpdir() });
 	await run('mv', [path.join(os.tmpdir(), 'pocketbase'), 'db/']);
 	await run('rm', ['-f', pbzippath]);
+	await run('mv', ['project.code-workspace', `${BASENAME}.code-workspace`]);
 }
 
 await run('npm', ['create', 'svelte@latest', 'web']);
