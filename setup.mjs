@@ -39,6 +39,10 @@ const config = await fs.promises.readFile(configFile, 'utf8');
 const contents = config.replace('adapter-auto', 'adapter-node');
 await fs.promises.writeFile(configFile, contents, 'utf8');
 
+const envFile = path.join('web', '.env');
+const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
+await fs.promises.writeFile(envFile, envContents, 'utf8');
+
 if (os.platform() == 'win32') {
 	await run('ROBOCOPY.EXE', ['[web]\\', 'web\\', '/E']);
 	await run('RMDIR', ['[web]', '/S', '/Q']);
