@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const PBVERSION = '0.20.1';
+const PBVERSION = '0.20.4';
 const BASENAME = path.basename(process.cwd());
 
 const pblink = getPocketbaseLink();
