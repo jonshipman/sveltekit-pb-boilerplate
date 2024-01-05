@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG PB_VERSION=0.20.4
+ARG PB_VERSION=0.20.5
 ARG TARGETPLATFORM
 
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then export ARCHITECTURE=amd64; \
