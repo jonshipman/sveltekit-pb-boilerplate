@@ -24,7 +24,7 @@ services:
       - 3001
     environment:
       PORT: 3001
-      PUBLIC_DATABASE: ${PUBLIC_DATABASE:http://localhost:8081}
+      PUBLIC_DATABASE: ${PUBLIC_DATABASE:-http://localhost:8081}
     volumes:
       - './web:/app'
 
