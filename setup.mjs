@@ -51,9 +51,9 @@ await run('npm', [
 	'web',
 	'pkg',
 	'set',
-	`name = '${BASENAME.toLowerCase().replaceAll(' ', '-')}'`
+	`name="${BASENAME.toLowerCase().replaceAll(' ', '-')}"`
 ]);
-await run('npm', ['--prefix', 'web', 'pkg', 'set', `'scripts.start' = 'node build'`]);
+await run('npm', ['--prefix', 'web', 'pkg', 'set', `'scripts.start'="node build"`, '--json']);
 
 if (os.platform() == 'win32') {
 	await run('ROBOCOPY.EXE', ['[web]\\', 'web\\', '/E']);
