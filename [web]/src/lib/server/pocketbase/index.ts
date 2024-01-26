@@ -1,0 +1,1 @@
+export { pbAsAdmin } from './admin';
