@@ -4,11 +4,22 @@ routerAdd(
 	(c) => {
 		const body = $apis.requestInfo(c).data;
 
-		let check = {};
-		const { collection, id, created, updated, data = {} } = body;
+		const { collection, id, data = {} } = body;
+		let { created, updated } = body;
+
+		if (created && created.includes('T')) created = created.replace('T', ' ');
+		if (updated && updated.includes('T')) updated = updated.replace('T', ' ');
+
+		const check = new DynamicModel({ id: '' });
 
 		try {
-			check = $app.dao().db().select('id').from(collection).where($dbx.exp('id = {:id}', { id }));
+			$app
+				.dao()
+				.db()
+				.select('id')
+				.from(collection)
+				.where($dbx.exp('id = {:id}', { id }))
+				.one(check);
 		} catch (e) {
 			// noop.
 		}
@@ -28,6 +39,9 @@ routerAdd(
 		} catch (error) {
 			throw new ApiError(500, 'dataToInsert creation; ' + error.message);
 		}
+
+		if (created) dataToInsert.created = created;
+		if (updated) dataToInsert.updated = updated;
 
 		try {
 			if (check?.id) {
