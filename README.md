@@ -35,3 +35,7 @@ My projects tend to focus on SSR.
 This boilerplate will prioritize SSR as most projects will have the Pocketbase URL only on localhost.
 However, I recently needed realtime so I added it to the mix.
 If you want to protect your database: change the PUBLIC_DATABASE envvar to DATABASE, remove `httpOnly` from hooks.server, and remove hooks.client + lib/pocketbase/client.
+
+## scripts: typegen
+
+On Windows, you will need the Windows 10 SDK. If you only have the 11 SDK, you will need to download 10. `pocketbase-typegen` uses the npm package sqlite3 and that uses node-gyp:^8 which isn't compatible with Windows 11 SDK. Note: I do use WOA, so x86 and x64 Windows may be unaffected.

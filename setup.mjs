@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const PBVERSION = '0.20.7';
+const PBVERSION = '0.22.3';
 const BASENAME = path.basename(process.cwd());
 
 const pblink = getPocketbaseLink();
@@ -24,9 +24,8 @@ if (os.platform() == 'win32') {
 
 await run('npm', ['create', 'svelte@latest', 'web']);
 await run('npm', [
-	'--prefix',
-	'web',
-	'add',
+	'i',
+	'-w=web',
 	'-D',
 	'postcss',
 	'tailwindcss',
@@ -35,7 +34,7 @@ await run('npm', [
 	'pocketbase'
 ]);
 await run('npx', ['tailwindcss', 'init'], { cwd: 'web' });
-await run('npm', ['--prefix', 'web', 'remove', '@sveltejs/adapter-auto']);
+await run('npm', ['remove', '-w=web', '@sveltejs/adapter-auto']);
 
 const configFile = path.join('web', 'svelte.config.js');
 const config = await fs.promises.readFile(configFile, 'utf8');
@@ -46,14 +45,7 @@ const envFile = path.join('web', '.env');
 const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
-await run('npm', [
-	'--prefix',
-	'web',
-	'pkg',
-	'set',
-	`name=${BASENAME.toLowerCase().replaceAll(' ', '-')}`
-]);
-await run('npm', ['--prefix', 'web', 'pkg', 'set', `scripts.start=node build`]);
+await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
 
 if (os.platform() == 'win32') {
 	await run('ROBOCOPY.EXE', ['[web]\\', 'web\\', '/E']);

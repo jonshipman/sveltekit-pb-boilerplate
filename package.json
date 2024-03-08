@@ -1,0 +1,25 @@
+{
+	"name": "svelte-pb-bolierplate",
+	"version": "1.0.0",
+	"description": "Simple setup for SK and PB. For me to save in one spot and reuse as needed.",
+	"workspaces": [
+		"web",
+		"db"
+	],
+	"scripts": {
+		"build": "npm run -w=web build",
+		"dev": "concurrently \"npm run -w=db dev\" \"npm run -w=web dev\"",
+		"start": "npm run -w=web start",
+		"migration:flatten": "npm run -w=db migration:flatten",
+		"typegen": "cross-env pocketbase-typegen --db ./db/pb_data/data.db --out web/src/lib/pocketbase/index.d.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"devDependencies": {
+		"concurrently": "^8.2.2",
+		"cross-env": "^7.0.3",
+		"pocketbase-typegen": "^1.2.1"
+	}
+}
