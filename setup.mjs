@@ -18,15 +18,11 @@ if (args[0] && BASENAME !== args[0]) {
 	process.chdir(BASENAME);
 }
 
+const resolved = path.resolve('.');
 const pblink = getPocketbaseLink();
-const pbzippath = path.join(os.tmpdir(), 'pocketbase.zip');
-await run('curl', ['-o', pbzippath, '-L', pblink]);
+const pbzippath = 'pocketbase.zip';
 
 if (os.platform() == 'win32') {
-	await run('TAR.EXE', ['-xf', pbzippath], { cwd: os.tmpdir() });
-	await run('MOVE', [path.join(os.tmpdir(), 'pocketbase.exe'), 'db\\']);
-	await run('DEL', ['/F', pbzippath]);
-	await run('COPY', [path.join(template, 'project.code-workspace'), `${BASENAME}.code-workspace`]);
 	await run('ROBOCOPY.EXE', [
 		template + path.sep,
 		'.\\',
@@ -38,10 +34,6 @@ if (os.platform() == 'win32') {
 		'web'
 	]);
 } else {
-	await run('unzip', [pbzippath], { cwd: os.tmpdir() });
-	await run('mv', [path.join(os.tmpdir(), 'pocketbase'), 'db/']);
-	await run('rm', ['-f', pbzippath]);
-	await run('cp', [path.join(template, 'project.code-workspace'), `${BASENAME}.code-workspace`]);
 	await run('rsync', [
 		'-av',
 		template + path.sep,
@@ -50,6 +42,24 @@ if (os.platform() == 'win32') {
 		'--exclude=web'
 	]);
 }
+
+await run('curl', ['-o', pbzippath, '-L', pblink]);
+
+if (os.platform() == 'win32') {
+	await run('TAR.EXE', ['-xf', pbzippath, '-C', path.join(resolved, 'db') + path.sep]);
+} else {
+	await run('unzip', [pbzippath, '-d', path.join(resolved, 'db') + path.sep]);
+}
+
+const cleanupPb = [pbzippath, path.join('db', 'CHANGELOG.md'), path.join('db', 'LICENSE.md')];
+for (const file of cleanupPb) {
+	await fs.promises.unlink(file);
+}
+
+await fs.promises.copyFile(
+	path.join(template, 'project.code-workspace'),
+	`${BASENAME}.code-workspace`
+);
 
 await run('npm', ['create', 'svelte@latest', 'web']);
 await run('npm', [
@@ -83,6 +93,9 @@ if (os.platform() == 'win32') {
 } else {
 	await run('rsync', ['-av', path.join(template, 'web') + path.sep, 'web/']);
 }
+
+await fs.promises.rename('gitignore', '.gitignore');
+await fs.promises.rename(path.join('db', 'gitignore'), path.join('db', '.gitignore'));
 
 await run('git', ['init']);
 await run('git', ['add', '.']);
