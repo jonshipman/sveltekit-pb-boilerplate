@@ -1,6 +1,0 @@
-.env
-/*.sh
-/*.cmd
-!/setup.cmd
-!/setup.sh
-!/gentypes.sh

@@ -1,10 +1,22 @@
+#! /usr/bin/env node
 import cp from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const __dirname = path.dirname(fileURLToPath(new URL(import.meta.url)));
+const template = path.join(__dirname, 'template');
+
+const args = process.argv.slice(2);
 const PBVERSION = '0.22.3';
-const BASENAME = path.basename(process.cwd());
+let BASENAME = path.basename(process.cwd());
+
+if (args[0] && BASENAME !== args[0]) {
+	BASENAME = args[0];
+	fs.mkdirSync(BASENAME, { recursive: true });
+	process.chdir(BASENAME);
+}
 
 const pblink = getPocketbaseLink();
 const pbzippath = path.join(os.tmpdir(), 'pocketbase.zip');
@@ -14,12 +26,29 @@ if (os.platform() == 'win32') {
 	await run('TAR.EXE', ['-xf', pbzippath], { cwd: os.tmpdir() });
 	await run('MOVE', [path.join(os.tmpdir(), 'pocketbase.exe'), 'db\\']);
 	await run('DEL', ['/F', pbzippath]);
-	await run('MOVE', ['project.code-workspace', `${BASENAME}.code-workspace`]);
+	await run('COPY', [path.join(template, 'project.code-workspace'), `${BASENAME}.code-workspace`]);
+	await run('ROBOCOPY.EXE', [
+		template + path.sep,
+		'.\\',
+		'/MIR',
+		'/Z',
+		'/XF',
+		'*.code-workspace',
+		'/XD',
+		'web'
+	]);
 } else {
 	await run('unzip', [pbzippath], { cwd: os.tmpdir() });
 	await run('mv', [path.join(os.tmpdir(), 'pocketbase'), 'db/']);
 	await run('rm', ['-f', pbzippath]);
-	await run('mv', ['project.code-workspace', `${BASENAME}.code-workspace`]);
+	await run('cp', [path.join(template, 'project.code-workspace'), `${BASENAME}.code-workspace`]);
+	await run('rsync', [
+		'-av',
+		template + path.sep,
+		'./',
+		'--exclude=*.code-workspace',
+		'--exclude=web'
+	]);
 }
 
 await run('npm', ['create', 'svelte@latest', 'web']);
@@ -46,22 +75,20 @@ const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
 await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
+await run('npm', ['pkg', '-w=web', 'set', `version=0.0.0`]);
+await run('npm', ['pkg', 'set', `name=${BASENAME}`]);
 
 if (os.platform() == 'win32') {
-	await run('ROBOCOPY.EXE', ['[web]\\', 'web\\', '/E']);
-	await run('RMDIR', ['[web]', '/S', '/Q']);
-	await run('RMDIR', ['.git', '/S', '/Q']);
-	await run('DEL', ['/F', 'README.md']);
-	await run('DEL', ['/F', 'setup.*']);
+	await run('ROBOCOPY.EXE', [path.join(template, 'web') + path.sep, 'web\\', '/E']);
 } else {
-	await run('rsync', ['-av', '[web]/', 'web/']);
-	await run('rm', ['-rf', '[web]']);
-	await run('rm', ['-rf', '.git']);
-	await run('rm', ['-f', 'setup.*']);
+	await run('rsync', ['-av', path.join(template, 'web') + path.sep, 'web/']);
 }
 
 await run('git', ['init']);
 await run('git', ['add', '.']);
+
+console.log('All Done!');
+process.exit(0);
 
 function run(command, args = [], options = {}) {
 	console.log('\x1b[43m', 'command', '\x1b[0m');
