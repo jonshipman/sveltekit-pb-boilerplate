@@ -1,7 +1,7 @@
 {
 	"name": "svelte-pb-bolierplate",
 	"version": "0.0.1",
-	"description": "Simple setup for SK and PB. For me to save in one spot and reuse as needed.",
+	"description": "",
 	"workspaces": [
 		"web",
 		"db"
