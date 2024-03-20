@@ -9,5 +9,8 @@
   "type": "module",
   "bin": {
     "svelte-pb": "setup.mjs"
+  },
+  "dependencies": {
+    "extract-zip": "^2.0.1"
   }
 }
