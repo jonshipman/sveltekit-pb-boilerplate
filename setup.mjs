@@ -84,7 +84,7 @@ const envFile = path.join('web', '.env');
 const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
-await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
+await run('npm', ['pkg', '-w=web', 'set', `"scripts.start=node build"`]);
 await run('npm', ['pkg', '-w=web', 'set', `version=0.0.0`]);
 await run('npm', ['pkg', 'set', `name=${BASENAME}`]);
 
