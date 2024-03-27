@@ -7,9 +7,9 @@
 		"db"
 	],
 	"scripts": {
-		"build": "npm run -w=web build",
-		"dev": "concurrently \"npm run -w=db dev\" \"npm run -w=web dev\"",
-		"start": "npm run -w=web start",
+		"build": "dotenv -- npm run -w=web build",
+		"dev": "dotenv -- concurrently \"npm run -w=db dev\" \"npm run -w=web dev\"",
+		"start": "dotenv -- npm run -w=web start",
 		"migration:flatten": "npm run -w=db migration:flatten",
 		"typegen": "cross-env pocketbase-typegen --db ./db/pb_data/data.db --out web/src/lib/pocketbase/index.d.ts"
 	},
@@ -20,6 +20,7 @@
 	"devDependencies": {
 		"concurrently": "^8.2.2",
 		"cross-env": "^7.0.3",
+		"dotenv-cli": "^7.4.1",
 		"pocketbase-typegen": "^1.2.1"
 	}
 }
