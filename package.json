@@ -9,5 +9,8 @@
   "type": "module",
   "bin": {
     "svelte-pb": "setup.mjs"
+  },
+  "dependencies": {
+    "yauzl": "^3.1.2"
   }
 }
