@@ -5,7 +5,7 @@
 	"main": "pocketbase",
 	"scripts": {
 		"dev": "cross-env ./pocketbase serve",
-		"migration:flatten": "rimraf pb_migrations/* && cross-env ./pocketbase migrate collections && cross-env ./pocketbase migrate history-sync"
+		"migration:flatten": "rimraf --glob pb_migrations/* && cross-env ./pocketbase migrate collections && cross-env ./pocketbase migrate history-sync"
 	},
 	"keywords": [],
 	"author": "",
