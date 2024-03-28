@@ -1,6 +1,6 @@
 {
   "name": "svelte-pb",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Simple setup for SK and PB. For me to save in one spot and reuse as needed.",
   "main": "setup.mjs",
   "keywords": [],
@@ -9,5 +9,8 @@
   "type": "module",
   "bin": {
     "svelte-pb": "setup.mjs"
+  },
+  "dependencies": {
+    "yauzl": "^3.1.2"
   }
 }

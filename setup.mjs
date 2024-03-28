@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import yauzl from 'yauzl';
 
 const __dirname = path.dirname(fileURLToPath(new URL(import.meta.url)));
 const template = path.join(__dirname, 'template');
@@ -22,7 +23,7 @@ const resolved = path.resolve('.');
 const pblink = getPocketbaseLink();
 const pbzippath = 'pocketbase.zip';
 
-if (os.platform() == 'win32') {
+if (os.platform() === 'win32') {
 	await run('ROBOCOPY.EXE', [
 		template + path.sep,
 		'.\\',
@@ -45,15 +46,33 @@ if (os.platform() == 'win32') {
 
 await run('curl', ['-o', pbzippath, '-L', pblink]);
 
-if (os.platform() == 'win32') {
-	await run('TAR.EXE', ['-xf', pbzippath, '-C', path.join(resolved, 'db') + path.sep]);
-} else {
-	await run('unzip', [pbzippath, '-d', path.join(resolved, 'db') + path.sep]);
-}
+await new Promise((resolve, reject) => {
+	yauzl.open(pbzippath, { lazyEntries: true }, function (err, zipfile) {
+		if (err) return [console.error(err), reject(err)];
+		zipfile.readEntry();
+		zipfile.on('entry', function (entry) {
+			if (/^pocketbase/.test(entry.fileName)) {
+				const writeStream = fs.createWriteStream(path.join(resolved, 'db', entry.fileName));
 
-const cleanupPb = [pbzippath, path.join('db', 'CHANGELOG.md'), path.join('db', 'LICENSE.md')];
-for (const file of cleanupPb) {
-	await fs.promises.unlink(file);
+				zipfile.openReadStream(entry, function (err, readStream) {
+					if (err) return [console.error(err), reject(err)];
+					readStream.on('end', function () {
+						resolve();
+					});
+
+					readStream.pipe(writeStream);
+				});
+			} else {
+				zipfile.readEntry();
+			}
+		});
+	});
+});
+
+await fs.promises.unlink(pbzippath);
+
+if (os.platform() !== 'win32') {
+	await run('chmod', ['+x', path.join('db', 'pocketbase')]);
 }
 
 await fs.promises.copyFile(
@@ -84,7 +103,7 @@ const envFile = path.join('.env');
 const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
-if (os.platform() == 'win32') {
+if (os.platform() === 'win32') {
 	await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
 } else {
 	await run('npm', ['pkg', '-w=web', 'set', `"scripts.start=node build"`]);
@@ -93,12 +112,13 @@ if (os.platform() == 'win32') {
 await run('npm', ['pkg', '-w=web', 'set', `version=0.0.0`]);
 await run('npm', ['pkg', 'set', `name=${BASENAME}`]);
 
-if (os.platform() == 'win32') {
+if (os.platform() === 'win32') {
 	await run('ROBOCOPY.EXE', [path.join(template, 'web') + path.sep, 'web\\', '/E']);
 } else {
 	await run('rsync', ['-av', path.join(template, 'web') + path.sep, 'web/']);
 }
 
+await run('npm', ['install']);
 await fs.promises.rename('gitignore', '.gitignore');
 await fs.promises.rename(path.join('db', 'gitignore'), path.join('db', '.gitignore'));
 
