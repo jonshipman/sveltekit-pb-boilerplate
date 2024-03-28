@@ -71,6 +71,10 @@ await new Promise((resolve, reject) => {
 
 await fs.promises.unlink(pbzippath);
 
+if (os.platform() !== 'win32') {
+	await run('chmod', ['+x', path.join('db','pocketbase')]);
+}
+
 await fs.promises.copyFile(
 	path.join(template, 'project.code-workspace'),
 	`${BASENAME}.code-workspace`
