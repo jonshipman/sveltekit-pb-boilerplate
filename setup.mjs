@@ -23,7 +23,7 @@ const resolved = path.resolve('.');
 const pblink = getPocketbaseLink();
 const pbzippath = 'pocketbase.zip';
 
-if (os.platform() == 'win32') {
+if (os.platform() === 'win32') {
 	await run('ROBOCOPY.EXE', [
 		template + path.sep,
 		'.\\',
@@ -99,7 +99,7 @@ const envFile = path.join('.env');
 const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
-if (os.platform() == 'win32') {
+if (os.platform() === 'win32') {
 	await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
 } else {
 	await run('npm', ['pkg', '-w=web', 'set', `"scripts.start=node build"`]);
@@ -108,7 +108,7 @@ if (os.platform() == 'win32') {
 await run('npm', ['pkg', '-w=web', 'set', `version=0.0.0`]);
 await run('npm', ['pkg', 'set', `name=${BASENAME}`]);
 
-if (os.platform() == 'win32') {
+if (os.platform() === 'win32') {
 	await run('ROBOCOPY.EXE', [path.join(template, 'web') + path.sep, 'web\\', '/E']);
 } else {
 	await run('rsync', ['-av', path.join(template, 'web') + path.sep, 'web/']);
