@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import extract from 'extract-zip';
 
 const __dirname = path.dirname(fileURLToPath(new URL(import.meta.url)));
 const template = path.join(__dirname, 'template');
@@ -45,11 +46,7 @@ if (os.platform() == 'win32') {
 
 await run('curl', ['-o', pbzippath, '-L', pblink]);
 
-if (os.platform() == 'win32') {
-	await run('TAR.EXE', ['-xf', pbzippath, '-C', path.join(resolved, 'db') + path.sep]);
-} else {
-	await run('unzip', [pbzippath, '-d', path.join(resolved, 'db') + path.sep]);
-}
+await extract(pbzippath, { dir: path.join(resolved, 'db') + path.sep });
 
 const cleanupPb = [pbzippath, path.join('db', 'CHANGELOG.md'), path.join('db', 'LICENSE.md')];
 for (const file of cleanupPb) {
