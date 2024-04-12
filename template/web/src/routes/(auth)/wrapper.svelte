@@ -8,7 +8,7 @@
 	{title}
 </h2>
 
-<div class="text-center">
+<div class="text-center text-black dark:text-white">
 	<slot name="altaction">
 		or <a class="text-indigo-500 hover:underline cursor-pointer" href="/login">login</a>
 	</slot>
