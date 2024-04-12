@@ -103,6 +103,7 @@ await fs.promises.writeFile(configFile, contents, 'utf8');
 const envFile = path.join('.env');
 const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\nADMIN_USER=\nADMIN_PASS=\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
+await fs.promises.writeFile(path.join('web', '.env'), envContents, 'utf8');
 
 if (os.platform() === 'win32') {
 	await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
