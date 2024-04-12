@@ -81,19 +81,31 @@ await fs.promises.copyFile(
 );
 
 await run('npm', ['create', 'svelte@latest', 'web']);
-await run('npm', [
-	'i',
-	'-w=web',
-	'-D',
+const dependencies = [
 	'postcss',
 	'tailwindcss',
 	'autoprefixer',
 	'@sveltejs/adapter-node',
 	'pocketbase',
 	'@types/node'
-]);
+];
+const npmDevDepCmd = [];
+
+for (const dep of dependencies) {
+	try {
+		const response = await fetch(`https://registry.npmjs.org/${dep}`).then((r) => r.json());
+		if (response?.['dist-tags'].latest) {
+			const version = response['dist-tags'].latest;
+			npmDevDepCmd.push(`devDependencies.${dep}="^${version}"`);
+		}
+	} catch (e) {
+		console.error(e);
+	}
+}
+
+await run('npm', ['pkg', '-w=web', 'set', ...npmDevDepCmd]);
+await run('npm', ['pkg', '-w=web', 'delete', 'devDependencies.@sveltejs/adapter-auto']);
 await run('npx', ['tailwindcss', 'init'], { cwd: 'web' });
-await run('npm', ['remove', '-w=web', '@sveltejs/adapter-auto']);
 
 const configFile = path.join('web', 'svelte.config.js');
 const config = await fs.promises.readFile(configFile, 'utf8');
@@ -105,12 +117,7 @@ const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\nADMIN_USER=\nADMIN_P
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 await fs.promises.writeFile(path.join('web', '.env'), envContents, 'utf8');
 
-if (os.platform() === 'win32') {
-	await run('npm', ['pkg', '-w=web', 'set', `scripts.start=node build`]);
-} else {
-	await run('npm', ['pkg', '-w=web', 'set', `"scripts.start=node build"`]);
-}
-
+await run('npm', ['pkg', '-w=web', 'set', `"scripts.start=node build"`]);
 await run('npm', ['pkg', '-w=web', 'set', `version=0.0.0`]);
 await run('npm', ['pkg', 'set', `name=${BASENAME}`]);
 
@@ -120,7 +127,6 @@ if (os.platform() === 'win32') {
 	await run('rsync', ['-av', path.join(template, 'web') + path.sep, 'web/']);
 }
 
-await run('npm', ['install']);
 await fs.promises.rename('gitignore', '.gitignore');
 await fs.promises.rename(path.join('db', 'gitignore'), path.join('db', '.gitignore'));
 
@@ -140,6 +146,7 @@ function run(command, args = [], options = {}) {
 		if (os.platform() === 'win32') {
 			options.execPath = 'CMD.EXE';
 			options.execArgv = ['/C'];
+			options.windowsVerbatimArguments = true;
 		} else {
 			options.execPath = 'bash';
 			options.execArgv = ['-c'];
