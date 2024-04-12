@@ -101,7 +101,7 @@ const contents = config.replace('adapter-auto', 'adapter-node');
 await fs.promises.writeFile(configFile, contents, 'utf8');
 
 const envFile = path.join('.env');
-const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\n';
+const envContents = 'PUBLIC_DATABASE=http://127.0.0.1:8090\nADMIN_USER=\nADMIN_PASS=\n';
 await fs.promises.writeFile(envFile, envContents, 'utf8');
 
 if (os.platform() === 'win32') {
