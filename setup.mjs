@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(new URL(import.meta.url)));
 const template = path.join(__dirname, 'template');
 
 const args = process.argv.slice(2);
-const PBVERSION = '0.22.8';
+const PBVERSION = '0.22.11';
 let BASENAME = path.basename(process.cwd());
 
 if (args[0] && BASENAME !== args[0]) {
